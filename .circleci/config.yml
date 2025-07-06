@@ -5,7 +5,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints: 
-            - "SHA256:R42XQr6vNhZT1Iu4SZVbqi53uW6bgHEbVSUmR+2xYWk"
+            - "MD5:b5:d8:30:b7:e7:a0:7d:6a:c1:57:99:52:24:45:79:22"
       - checkout
       - run: 
           name: Docker Login
