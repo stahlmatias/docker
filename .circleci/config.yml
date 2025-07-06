@@ -1,0 +1,30 @@
+version: 2.1
+jobs:   
+  build:
+    machine: true
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+            - "SHA256:R42XQr6vNhZT1Iu4SZVbqi53uW6bgHEbVSUmR+2xYWk"
+      - checkout
+      - run: 
+          name: Docker Login
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: 
+          name: Build Docker Image
+          command: docker build -t stahlmatias/hello-docker:$CIRCLE_SHA1 .
+      - run: 
+          name: Push Docker Image
+          command: docker push stahlmatias/hello-docker:$CIRCLE_SHA1
+      - run: 
+          name: Deploy to Server
+          command: ssh -o StrictHostKeyChecking=no root@143.198.121.105 "docker stop hello-docker || true && docker rm hello-docker || true && docker run -d --name hello-docker -p 80:80 stahlmatias/hello-docker:$CIRCLE_SHA1"
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: main
